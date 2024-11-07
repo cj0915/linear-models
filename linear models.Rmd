@@ -68,3 +68,42 @@ fit |>
   knitr::kable(digits = 3)
 ```
 
+## Diagnostics
+
+```{r}
+modelr::add_residuals(nyc_airbnb, fit)
+modelr::add_predictions(nyc_airbnb, fit)
+```
+
+```{r}
+nyc_airbnb |> 
+  modelr::add_residuals(fit) |> 
+  ggplot(aes(x = borough, y = resid)) + geom_violin()
+```
+
+```{r}
+nyc_airbnb |> 
+  modelr::add_residuals(fit) |> 
+  ggplot(aes(x = stars, y = resid)) + geom_point()
+```
+
+## Hypothesis testing
+
+```{r}
+fit |>
+  broom::tidy()
+
+fit_null = lm(price ~ stars + borough, data = nyc_airbnb)
+
+fit_null |>
+  broom::tidy()
+
+fit_alt = lm(price ~ stars + borough + room_type, data = nyc_airbnb)
+
+fit_alt |>
+  broom::tidy()
+
+anova(fit_null, fit_alt) |> 
+  broom::tidy()
+```
+
